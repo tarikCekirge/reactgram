@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import {
     Form,
     FormControl,
-
     FormField,
     FormItem,
     FormLabel,
@@ -18,16 +17,17 @@ import { Input } from "@/components/ui/input"
 import { SignupValidation } from "@/lib/validation"
 import Loader from "@/components/shared/Loader"
 import { Link } from "react-router-dom"
-import { createUserAccount } from "@/lib/appwrite/api"
 import { toast } from "sonner"
+import { useCreateUserAccount, useSignInAccount } from "@/lib/tanstack/queriesAndMutations"
 
 
 
 
 
 const SingupForm = () => {
+    const { mutateAsync: createUserAccount, isPending: isCreatingAccount } = useCreateUserAccount()
+    const { mutateAsync: signInAccount, isPending: isSignIn } = useSignInAccount()
 
-    const isLoading = false;
 
     const form = useForm<z.infer<typeof SignupValidation>>({
         resolver: zodResolver(SignupValidation),
@@ -38,10 +38,22 @@ const SingupForm = () => {
             password: ""
         },
     })
+
+
+
     async function onSubmit(values: z.infer<typeof SignupValidation>) {
         const newUser = await createUserAccount(values);
 
         if (!newUser) {
+            return toast(<div className="p-2 bg-accent">Sign up failed. Please try again</div>)
+        }
+
+        const session = await signInAccount({
+            email: values.email,
+            password: values.password
+        })
+
+        if (!session) {
             return toast(<div className="p-2 bg-accent">Sign up failed. Please try again</div>)
         }
     }
@@ -109,8 +121,8 @@ const SingupForm = () => {
                             </FormItem>
                         )}
                     />
-                    <Button disabled={isLoading} type="submit" className="prima">
-                        {isLoading ? (
+                    <Button disabled={isCreatingAccount} type="submit" className="prima">
+                        {isCreatingAccount ? (
                             <div className="flex items-center justify-center gap-2">
                                 <Loader />Loading...
 
