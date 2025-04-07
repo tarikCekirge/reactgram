@@ -1,4 +1,4 @@
-import AuthLayout from './_auth/forms/AuthLayout';
+import AuthLayout from './_auth/AuthLayout';
 import SinginForm from './_auth/forms/SinginForm';
 import SingupForm from './_auth/forms/SingupForm';
 import Home from './_root/pages/Home';
