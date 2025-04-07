@@ -18,6 +18,9 @@ import { Input } from "@/components/ui/input"
 import { SignupValidation } from "@/lib/validation"
 import Loader from "@/components/shared/Loader"
 import { Link } from "react-router-dom"
+import { createUserAccount } from "@/lib/appwrite/api"
+import { toast } from "sonner"
+
 
 
 
@@ -35,8 +38,12 @@ const SingupForm = () => {
             password: ""
         },
     })
-    function onSubmit(values: z.infer<typeof SignupValidation>) {
-        // const newUser = await createUserAccount(values)
+    async function onSubmit(values: z.infer<typeof SignupValidation>) {
+        const newUser = await createUserAccount(values);
+
+        if (!newUser) {
+            return toast(<div className="p-2 bg-accent">Sign up failed. Please try again</div>)
+        }
     }
 
     return (
@@ -82,7 +89,7 @@ const SingupForm = () => {
                             <FormItem>
                                 <FormLabel className="text-xs">Email</FormLabel>
                                 <FormControl>
-                                    <Input type="email" className="border-none"  {...field} />
+                                    <Input type="email" className="border-none bg-primary"  {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -94,7 +101,7 @@ const SingupForm = () => {
                         name="password"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="text-xs">Email</FormLabel>
+                                <FormLabel className="text-xs">Password</FormLabel>
                                 <FormControl>
                                     <Input type="password" className="border-none"  {...field} />
                                 </FormControl>
