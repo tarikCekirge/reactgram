@@ -1,8 +1,11 @@
 
+import { Button } from "@/components/ui/button"
+
+
 const AuthLayout = () => {
     return (
         <div>
-            AuthLayout
+            <Button variant={"default"}>Click me</Button>
         </div>
     )
 }
